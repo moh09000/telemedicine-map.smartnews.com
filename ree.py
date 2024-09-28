@@ -1,33 +1,49 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 
-# تحميل WebDriver المناسب لمتصفحك
-driver = webdriver.Chrome(executable_path='/path/to/chromedriver')  # ضع المسار المناسب لـ ChromeDriver
-# أو يمكن استخدام Firefox
-# driver = webdriver.Firefox(executable_path='/path/to/geckodriver')
+# Path to your WebDriver executable (adjust the path based on your system)
+service = Service('/usr/bin/chromedriver')  # Set the correct path for ChromeDriver
+driver = webdriver.Chrome(service=service)  # Use 'service' argument instead of 'executable_path'
 
-# فتح الموقع المطلوب
-driver.get('https://smartmockups.com')
+# List of emails and passwords
+credentials = [
+    {"email": "wejari9637@skrak.com", "password": "wejari9637@skrak.com"},
+    # Add more credentials here
+]
 
-# إضافة وقت انتظار لتأكد من تحميل الصفحة
-time.sleep(3)
+# Target URL
+login_url = "https://smartmockups.com"
 
-# العثور على حقول البريد الإلكتروني وكلمة المرور
-email_input = driver.find_element(By.NAME, 'email')  # استبدل 'email' بمعرف العنصر الصحيح إذا كان مختلفًا
-password_input = driver.find_element(By.NAME, 'password')  # استبدل 'password' بمعرف العنصر الصحيح إذا كان مختلفًا
+# Function to log in with a given email and password
+def login(email, password):
+    driver.get(login_url)
+    time.sleep(2)  # Let the page load
 
-# إدخال البريد الإلكتروني وكلمة المرور
-email_input.send_keys('wejari9637@skrak.com')  # استبدل بالبريد الإلكتروني الخاص بك
-password_input.send_keys('your_password')  # استبدل بكلمة المرور الخاصة بك
+    # Adjust the element locators based on the page's structure
+    email_field = driver.find_element(By.NAME, 'email')  # Adjust to your site's form structure
+    password_field = driver.find_element(By.NAME, 'password')  # Adjust accordingly
 
-# العثور على زر "تسجيل الدخول" والنقر عليه
-login_button = driver.find_element(By.XPATH, '//*[@id="login_button_id"]')  # استبدل 'login_button_id' بالمسار المناسب
-login_button.click()
+    # Clear fields and enter credentials
+    email_field.clear()
+    password_field.clear()
 
-# الانتظار قليلاً للتأكد من نجاح عملية تسجيل الدخول
-time.sleep(5)
+    email_field.send_keys(email)
+    password_field.send_keys(password)
 
-# إغلاق المتصفح بعد الانتهاء
+    # Submit the form (adjust the locator for the button)
+    submit_button = driver.find_element(By.ID, 'login-button')  # Adjust accordingly
+    submit_button.click()
+
+    time.sleep(5)  # Wait to see the result
+
+# Iterate over credentials and login
+for credential in credentials:
+    print(f"Logging in with {credential['email']}")
+    login(credential['email'], credential['password'])
+    time.sleep(3)  # Pause between attempts
+
+# Close the browser
 driver.quit()
