@@ -1,12 +1,18 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 import time
+
+# Set up Chrome options for headless mode
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Run in headless mode
+chrome_options.add_argument("--no-sandbox")  # Overcome limited resource problems
+chrome_options.add_argument("--disable-dev-shm-usage")  # Bypass OS security model
 
 # Path to your WebDriver executable (adjust the path based on your system)
 service = Service('/usr/bin/chromedriver')  # Set the correct path for ChromeDriver
-driver = webdriver.Chrome(service=service)  # Use 'service' argument instead of 'executable_path'
+driver = webdriver.Chrome(service=service, options=chrome_options)  # Add options here
 
 # List of emails and passwords
 credentials = [
